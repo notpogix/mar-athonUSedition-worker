@@ -11,6 +11,10 @@ app.use(express.json());
 let accessToken = null;
 let tokenExpiry = null;
 
+// In-memory counters
+let totalSubs = 0;       // baseline, you set this manually
+let marathonSubs = 0;    // increments during the marathon
+
 // Helper: get Twitch OAuth token
 async function getAccessToken() {
   if (accessToken && dayjs().isBefore(tokenExpiry)) {
@@ -53,12 +57,6 @@ app.get("/stats", async (req, res) => {
     const followersData = await twitchAPI(`users/follows?to_id=${userId}`);
     const followers = followersData.total || 0;
 
-    // Subs (requires broadcaster auth normally, but we’ll placeholder for now)
-    const subs = 0;
-
-    // Bits (same, placeholder)
-    const bits = 0;
-
     // Stream uptime
     const streamData = await twitchAPI(`streams?user_id=${userId}`);
     let uptimeSeconds = 0;
@@ -69,8 +67,8 @@ app.get("/stats", async (req, res) => {
 
     res.json({
       followers,
-      subs,
-      bits,
+      totalSubs,
+      marathonSubs,
       uptimeSeconds,
       day: 1
     });
@@ -78,6 +76,22 @@ app.get("/stats", async (req, res) => {
     console.error(err);
     res.status(500).json({ error: "Failed to fetch Twitch stats" });
   }
+});
+
+// Increment marathon subs
+app.post("/add-sub", (req, res) => {
+  marathonSubs++;
+  res.json({ ok: true, marathonSubs });
+});
+
+// Set total subs manually
+app.post("/set-total-subs", (req, res) => {
+  const newTotal = Number(req.query.count);
+  if (isNaN(newTotal)) {
+    return res.status(400).json({ error: "Invalid count" });
+  }
+  totalSubs = newTotal;
+  res.json({ ok: true, totalSubs });
 });
 
 const port = process.env.PORT || 3000;
