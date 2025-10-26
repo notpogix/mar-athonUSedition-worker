@@ -1,0 +1,15 @@
+{
+  "name": "marlon-marathon-worker",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "tmi.js": "^1.8.5",
+    "dayjs": "^1.11.11",
+    "node-fetch": "^3.3.2",
+    "dotenv": "^16.4.5"
+  }
+}
