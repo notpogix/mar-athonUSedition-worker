@@ -45,8 +45,12 @@ async function twitchAPI(endpoint) {
       "Authorization": `Bearer ${token}`
     }
   });
-  return res.json();
+
+  const data = await res.json();
+  console.log(`Twitch API response for ${endpoint}:`, data); // 👈 this logs the full response
+  return data;
 }
+
 
 // Stats endpoint
 app.get("/stats", async (req, res) => {
