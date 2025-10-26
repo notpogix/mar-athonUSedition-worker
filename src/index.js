@@ -55,6 +55,7 @@ app.get("/stats", async (req, res) => {
 
     // Followers
     const followersData = await twitchAPI(`users/follows?to_id=${userId}`);
+    console.log("Followers API response:", followersData); // 👈 this line is new
     const followers = followersData.total || 0;
 
     // Stream uptime
